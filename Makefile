@@ -78,7 +78,7 @@ $(WORK_DIR):
 print:
 	@echo $(CPNT_LIST) "\n"$(CPNT_TARGETS) "\n"$(TB_TARGETS)
 
-prATare:
+prepare:
 	$(AT)$(PRATARE_TEST)
 
 # Tests
