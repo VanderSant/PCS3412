@@ -76,9 +76,11 @@ end entity test_mdc_fsmd;
 
 
 architecture dut of test_mdc_fsmd is
+    signal keep_simulating: bit := '1'; -- delimita o tempo de geração do clock
 begin
     stimulis: process(Ready)
     begin
+        keep_simulating <= '1';
         Start <= '1';
         A <= x"0A";
         B <= x"1A";
@@ -90,6 +92,7 @@ begin
             else
                 report "Errado!!";
             end if;
+            keep_simulating <= '0';
         end if;
         end process stimulis;
 
@@ -104,9 +107,13 @@ begin
     Relogio: process
         variable relogin: std_logic := '0';
     begin
-        Clock <= relogin;
-        relogin:=not relogin;
-        wait for 10 ns;
+        if keep_simulating = '1' then
+            Clock <= relogin;
+            relogin:=not relogin;
+            wait for 10 ns;
+        else
+            wait;
+        end if;
     end process Relogio;
 
 end architecture dut; 
