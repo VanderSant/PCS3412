@@ -3,10 +3,10 @@
 # 07/2020
 
 # Name of all components in priority order
-CPNT_LIST := mdc_comportamental
+CPNT_LIST := mdc_fsmd
 
 # Name of the component to be tested
-CPNT ?= mdc_comportamental
+CPNT ?= mdc_fsmd
 
 # Commands to prepare test files
 PREPARE_TEST :=

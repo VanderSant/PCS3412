@@ -1,7 +1,5 @@
 Library IEEE;
 use IEEE.std_logic_1164.all;
--- use IEEE.std_logic_arith.all;
--- use IEEE.std_logic_signed.all;
 
 entity mdc_comportamental_tb is
 end mdc_comportamental_tb;
@@ -19,7 +17,7 @@ architecture mdc_comportamental_tb of mdc_comportamental_tb is
     signal mdc: std_logic_vector(7 downto 0) := "00000000";
 
     signal keep_simulating: std_logic := '0';
-    
+
     begin
         dut: mdc_comportamental port map(a, b,mdc);
 
