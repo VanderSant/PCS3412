@@ -33,7 +33,7 @@ ALL_TARGETS		:= $(CPNT_TARGETS) $(TB_TARGETS)
 
 # Default values, can be set on the command line or here
 DEBUG	?= 1
-VISUAL	?= 0
+VISUAL	?= 1
 VERBOSE	?= 1
 
 ###############################################################################

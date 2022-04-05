@@ -68,7 +68,7 @@ Além disso, para ver o resultado da simulação em um ambiente gráfico, utiliz
 Assim, para indicar precisamente qual o projeto utilizado, qual componente deverá ser testado e se o ambiente gráfico deve ou não ser aberto, é preciso executar
 
 ```bash
-make test EP=EP1 CPNT=multiplicador VISUAL=1
+make test AT=AT1 CPNT=multiplicador VISUAL=1
 ```
 O componente `multiplicador` será testado com a testbench `multiplicador_tb` e o GtkWave será aberto para visualizar o resultado da simulação.
 
