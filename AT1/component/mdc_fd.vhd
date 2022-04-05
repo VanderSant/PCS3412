@@ -30,7 +30,8 @@ entity DIG_Register_BUS is
     Q: out std_logic_vector ((Bits-1) downto 0);
     D: in std_logic_vector ((Bits-1) downto 0);
     C: in std_logic;
-    en: in std_logic );
+    en: in std_logic; 
+    reset, set: in std_logic);
 end DIG_Register_BUS;
 
 architecture Behavioral of DIG_Register_BUS is
@@ -38,9 +39,13 @@ architecture Behavioral of DIG_Register_BUS is
 begin
    Q <= state;
 
-   process ( C )
+   process ( C,reset,set )
    begin
-      if rising_edge(C) and (en='1') then
+      if reset = '1' then
+        state <= (others => '0');
+      elsif set = '1' then
+        state <= (others => '1');
+      elsif rising_edge(C) and (en='1') then
         state <= D;
       end if;
    end process;
@@ -83,6 +88,7 @@ entity COMP_GATE_UNSIGNED is
     gr: out std_logic;
     eq: out std_logic;
     le: out std_logic;
+    compara: in std_logic;
     a: in std_logic_vector ((Bits-1) downto 0);
     b: in std_logic_vector ((Bits-1) downto 0) );
 end COMP_GATE_UNSIGNED;
@@ -110,7 +116,8 @@ end Behavioral;
 
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
-USE ieee.std_logic_unsigned.all;
+-- USE ieee.std_logic_unsigned.all;
+use IEEE.numeric_std.all;
 
 entity DIG_Sub is
   generic ( Bits: integer ); 
@@ -125,7 +132,7 @@ end DIG_Sub;
 architecture Behavioral of DIG_Sub is
    signal temp : std_logic_vector(Bits downto 0);
 begin
-   temp <= ('0' & a) - b - c_i;
+   temp <= std_logic_vector(unsigned(a) - unsigned(b));
 
    s    <= temp((Bits-1) downto 0);
    c_o  <= temp(Bits);
@@ -140,14 +147,15 @@ entity mdc_fd is
   port (
     A: in std_logic_vector(7 downto 0);
     B: in std_logic_vector(7 downto 0);
+    ce_a: in std_logic;
+    ce_b: in std_logic;
+    sel_b: in std_logic;
     clock: in std_logic;
-    sela: in std_logic_vector(1 downto 0);
-    selb: in std_logic;
-    cear: in std_logic;
-    cebr: in std_logic;
-    mdc: out std_logic_vector(7 downto 0);
+    reset, set, compara: in std_logic;
+    sel_a: in std_logic_vector(1 downto 0);
     igual: out std_logic;
-    menor: out std_logic);
+    menor: out std_logic;
+    mdc: out std_logic_vector(7 downto 0) );
 end mdc_fd;
 
 architecture Behavioral of mdc_fd is
@@ -161,7 +169,7 @@ begin
     generic map (
       Bits => 8)
     port map (
-      sel => selb,
+      sel => sel_b,
       in_0 => B,
       in_1 => A,
       p_out => s3);
@@ -171,13 +179,15 @@ begin
     port map (
       D => s3,
       C => clock,
-      en => cebr,
-      Q => s1);
+      en => ce_b,
+      Q => s1,
+      reset => reset,
+      set => set);
   gate2: entity work.MUX_GATE_BUS_2
     generic map (
       Bits => 8)
     port map (
-      sel => sela,
+      sel => sel_a,
       in_0 => A,
       in_1 => s0,
       in_2 => s1,
@@ -189,14 +199,17 @@ begin
     port map (
       D => s2,
       C => clock,
-      en => cear,
-      Q => mdc_temp);
+      en => ce_a,
+      Q => mdc_temp,
+      reset => reset,
+      set => set);
   gate4: entity work.COMP_GATE_UNSIGNED
     generic map (
       Bits => 8)
     port map (
       a => mdc_temp,
       b => s1,
+      compara => '0',
       eq => igual,
       le => menor);
   gate5: entity work.DIG_Sub
