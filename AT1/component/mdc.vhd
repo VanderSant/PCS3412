@@ -14,10 +14,16 @@ end entity mdc;
 architecture fd_uc of mdc is
     component mdc_fd is
         port (
-            a, b: in std_logic_vector(7 downto 0);
-            ce_a, ce_b, sel_b, clock, reset, set, compara: in std_logic;
+            A: in std_logic_vector(7 downto 0);
+            B: in std_logic_vector(7 downto 0);
+            ce_a: in std_logic;
+            ce_b: in std_logic;
+            sel_b: in std_logic;
+            clock: in std_logic;
+            reset, set, compara: in std_logic;
             sel_a: in std_logic_vector(1 downto 0);
-            igual, menor: out std_logic;
+            igual: out std_logic;
+            menor: out std_logic;
             mdc: out std_logic_vector(7 downto 0)
         );
     end component mdc_fd;

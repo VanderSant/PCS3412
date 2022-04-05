@@ -209,7 +209,7 @@ begin
     port map (
       a => mdc_temp,
       b => s1,
-      compara => '0',
+      compara => compara,
       eq => igual,
       le => menor);
   gate5: entity work.DIG_Sub
