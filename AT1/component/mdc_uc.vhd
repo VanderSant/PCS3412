@@ -61,5 +61,4 @@ begin
         end case;
     end process next_state_output;
 
-
 end architecture fsm;
