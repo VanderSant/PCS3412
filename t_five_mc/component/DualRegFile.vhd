@@ -24,8 +24,8 @@ use ieee.numeric_std.all;
 
 entity DualRegFile is
   generic(
-       NBend : integer := 4;
-       NBdado : integer := 8;
+       NBend : integer := 5;
+       NBdado : integer := 32;
        Tread : time := 5 ns;
        Twrite : time := 5 ns
   );
@@ -64,19 +64,17 @@ process (clk)
 -- "Update sensitivity list automatically" option status
 -- declarations
 begin
-	 if (clk'event and clk = '1') then
-        if (we = '1') then
-           ram(to_integer(unsigned(enda))) <= dadoina after Twrite;
-        end if;
-        enda_reg <= enda;
-        endb_reg <= endb;
+	if (clk'event and clk = '1') then
+          if (we = '1') then
+               ram(to_integer(unsigned(enda))) <= dadoina after Twrite;
+          end if;
+          enda_reg <= enda;
+          endb_reg <= endb;
      end if;
 end process;
 
 ---- User Signal Assignments ----
-dadoouta <= ram(to_integer(unsigned
-								(enda_reg))) after Tread;
-dadooutb <= ram(to_integer(unsigned
-								(endb_reg))) after Tread;
+dadoouta <= ram(to_integer(unsigned (enda_reg))) after Tread;
+dadooutb <= ram(to_integer(unsigned (endb_reg))) after Tread;
 
 end DualRegFile;

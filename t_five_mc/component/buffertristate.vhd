@@ -23,9 +23,9 @@ use IEEE.std_logic_1164.all;
 
 entity bufferTristate is
   generic(
-       NumeroBits : integer := 8;
-       Tenable : time := 1 ns;
-       Tdisable : time := 2 ns
+       NB : integer := 32;
+       Tenable : time := 0.5 ns;
+       Tdisable : time := 0.25 ns
   );
   port(
        Oe : in std_logic;
@@ -39,7 +39,7 @@ architecture bufferTristate of bufferTristate is
 begin
 
 ---- User Signal Assignments ----
-O <= I 			      			after Tenable when Oe = '1' else		-- Porta aberta
-		   (others => 'Z') 	after Tdisable;		    								-- Porta em alta imped�ncia
+O <= I after Tenable when Oe = '1' else		-- Porta aberta
+	(others => 'Z') after Tdisable;		-- Porta em alta impedância
 
 end bufferTristate;
