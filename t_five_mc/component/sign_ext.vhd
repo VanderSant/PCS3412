@@ -10,7 +10,7 @@ entity sign_ext is
     );
     port(
         inst        : in 	std_logic_vector(31 downto 0);
-        se_op     	: in 	std_logic_vector(2 downto 0);
+        se_op     	: in 	std_logic_vector(1 downto 0);
         result 	    : out 	std_logic_vector(31 downto 0)
     );
 end sign_ext;
