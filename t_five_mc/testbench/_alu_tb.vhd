@@ -4,12 +4,12 @@ USE ieee.std_logic_1164.all;
 use std.textio.all;
 use work.txt_util.all;
 
-entity ALU_tb is
-end ALU_tb;
+entity alu_tb is
+end alu_tb;
 
- architecture behav of ALU_tb is
+ architecture behav of alu_tb is
     --  Declaration of the component that will be instantiated.
-    component ALU
+    component alu
         generic(
             NB 	: integer := 32;
             Tsum 	: time := 1 ns;
@@ -19,22 +19,22 @@ end ALU_tb;
         port(
             A 		: in 	std_logic_vector(NB - 1 downto 0);
             B 		: in 	std_logic_vector(NB - 1 downto 0);
-            ALUctrl	: in 	std_logic_vector(2 downto 0);
+            alu_ctrl	: in 	std_logic_vector(2 downto 0);
             Nflag 	: out 	std_logic;
             Zflag 	: out 	std_logic;
             result 	: out 	std_logic_vector(NB - 1 downto 0)
         );
     end component;
     --  Specifies which entity is bound with the component.
-    for ALU_0: ALU use entity work.ALU;
+    for alu_0: alu use entity work.alu;
     signal Value1,Value2,ValueOut: STD_LOGIC_VECTOR(31 DOWNTO 0) := (others => '0');
     signal Operation: STD_LOGIC_vector(2 downto 0) := (others => '0');
     signal Negative,Zero: STD_LOGIC := '0';
  begin
     --  Component instantiation.
-    ALU_0: ALU port map (A => Value1,
+    alu_0: alu port map (A => Value1,
                          B => Value2,
-                         ALUctrl => Operation,
+                         alu_ctrl => Operation,
                          result => ValueOut,
                          Nflag => Negative,
                          Zflag => Zero);

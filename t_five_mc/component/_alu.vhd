@@ -7,9 +7,9 @@
 --
 -------------------------------------------------------------------------------
 --
--- File        : C:\My_Designs\Biblioteca_de_ComponentesV4.5\compile\ALU.vhd
+-- File        : C:\My_Designs\Biblioteca_de_ComponentesV4.5\compile\alu.vhd
 -- Generated   : Thu Feb  1 16:01:18 2018
--- From        : C:\My_Designs\Biblioteca_de_ComponentesV4.5\src\ALU.bde
+-- From        : C:\My_Designs\Biblioteca_de_ComponentesV4.5\src\alu.bde
 -- By          : Bde2Vhdl ver. 2.6
 --
 -------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ use IEEE.numeric_std.all;
 -- use IEEE.std_logic_arith.all;
 -- use IEEE.std_logic_signed.all;
 
-entity ALU is
+entity alu is
   generic(
        NB 	: integer := 32;
        Tsum 	: time := 1 ns;
@@ -32,16 +32,16 @@ entity ALU is
        Tshift 	: time := 1 ns
   );
   port(
-       A 		: in 	std_logic_vector(NB - 1 downto 0);
-       B 		: in 	std_logic_vector(NB - 1 downto 0);
-       ALUctrl	: in 	std_logic_vector(2 downto 0);
-       Nflag 	: out 	std_logic;
-       Zflag 	: out 	std_logic;
-       result 	: out 	std_logic_vector(NB - 1 downto 0)
+       A 		     : in 	std_logic_vector(NB - 1 downto 0);
+       B 		     : in 	std_logic_vector(NB - 1 downto 0);
+       alu_ctrl	: in 	std_logic_vector(2 downto 0);
+       Nflag 	     : out 	std_logic;
+       Zflag 	     : out 	std_logic;
+       result 	     : out 	std_logic_vector(NB - 1 downto 0)
   );
-end ALU;
+end alu;
 
-architecture ALU of ALU is
+architecture alu_arch of alu is
 
 ---- Architecture declarations -----
 signal m_result : std_logic_vector (NB - 1 downto 0) := (others => '0');
@@ -61,14 +61,6 @@ begin
 ---- User Signal Assignments ----
 m_shamt <= to_integer(unsigned(B(4 downto 0)));
 
--- with ALUctrl select
---      m_res <=	(A + B)	               when "000" after Tsum,
---                     (A - B)	               when "010" after Tsub,
--- 				(A - B)	               when "011" after Tsub,
--- 				(A sll B(4 downto 0))	when "100" after Tshift,
--- 				(A srl B(4 downto 0))	when "110" after Tshift,
--- 				(A sra B(4 downto 0))	when "111" after Tshift,
--- 				(others => '0')		when others;
 m_add_out <= std_logic_vector(signed(A) + signed(B));
 m_sub_out <= std_logic_vector(signed(A) - signed(B));
 m_slt_out(0) <= m_sub_out(NB - 1);
@@ -77,12 +69,12 @@ m_srl_out <= std_logic_vector(shift_right(unsigned(A), m_shamt));
 m_sra_out <= std_logic_vector(shift_right(signed(A), m_shamt));
 
 -- Resultado da Operação
-m_result <= 	m_add_out after Tsum     when ALUctrl = "000" else
-               m_sub_out after Tsub  	when ALUctrl = "010" else
-               m_slt_out after Tsub     when ALUctrl = "011" else
-               m_sll_out after Tshift  	when ALUctrl = "100" else
-               m_srl_out after Tshift 	when ALUctrl = "110" else
-               m_sra_out after Tshift 	when ALUctrl = "111";
+m_result <= 	m_add_out after Tsum     when alu_ctrl = "000" else
+               m_sub_out after Tsub  	when alu_ctrl = "010" else
+               m_slt_out after Tsub     when alu_ctrl = "011" else
+               m_sll_out after Tshift  	when alu_ctrl = "100" else
+               m_srl_out after Tshift 	when alu_ctrl = "110" else
+               m_sra_out after Tshift 	when alu_ctrl = "111";
 
 -- Atualização do result
 result <= m_result;
@@ -92,4 +84,4 @@ Nflag <= m_result(NB - 1);
 Zflag <= '1' when m_result = m_zero else '0';
 
 
-end ALU;
+end alu_arch;
