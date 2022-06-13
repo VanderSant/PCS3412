@@ -24,8 +24,8 @@ use IEEE.std_logic_1164.all;
 entity mux4x1 is
   generic(
        NB : integer := 32;
-       Tsel : time := 0.5 ns;
-       Tdata : time := 0.25 ns
+       t_sel : time := 0.5 ns;
+       t_data : time := 0.25 ns
   );
   port(
      Sel : in std_logic_vector(1 downto 0);
@@ -49,11 +49,11 @@ process (I0, I1, I2, I3, Sel)
 -- "Update sensitivity list automatically" option status
 begin
 	case Sel is
-		when "00" => O <= I0 after Tsel;
-		when "01" => O <= I1 after Tsel;
-		when "10"	=> O <= I2 after Tsel;
-		when "11"	=> O <= I3 after Tsel;
-		when others => O <= (others => 'X') after Tsel;
+		when "00" => O <= I0 after t_sel;
+		when "01" => O <= I1 after t_sel;
+		when "10"	=> O <= I2 after t_sel;
+		when "11"	=> O <= I3 after t_sel;
+		when others => O <= (others => 'X') after t_sel;
 	end case;
 end process mux4x1_p;
 
