@@ -21,25 +21,25 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 
-entity bufferTristate is
+entity buffer_tri is
   generic(
        NB : integer := 32;
-       Tenable : time := 0.5 ns;
-       Tdisable : time := 0.25 ns
+       t_en : time := 0.5 ns;
+       t_dis : time := 0.25 ns
   );
   port(
        Oe : in std_logic;
-       I : in std_logic_vector(NumeroBits - 1 downto 0);
-       O : out std_logic_vector(NumeroBits - 1 downto 0)
+       I : in std_logic_vector(NB - 1 downto 0);
+       O : out std_logic_vector(NB - 1 downto 0)
   );
-end bufferTristate;
+end buffer_tri;
 
-architecture bufferTristate of bufferTristate is
+architecture buffer_tri_arch of buffer_tri is
 
 begin
 
 ---- User Signal Assignments ----
-O <= I after Tenable when Oe = '1' else		-- Porta aberta
-	(others => 'Z') after Tdisable;		-- Porta em alta impedância
+O <= I after t_en when Oe = '1' else		-- Porta aberta
+	(others => 'Z') after t_dis;		-- Porta em alta impedância
 
-end bufferTristate;
+end buffer_tri_arch;
