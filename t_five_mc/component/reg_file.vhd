@@ -7,9 +7,9 @@
 --
 -------------------------------------------------------------------------------
 --
--- File        : C:\My_Designs\Biblioteca_de_ComponentesV4.5\compile\DualRegFile.vhd
+-- File        : C:\My_Designs\Biblioteca_de_ComponentesV4.5\compile\reg_file.vhd
 -- Generated   : Thu Feb  1 16:01:23 2018
--- From        : C:\My_Designs\Biblioteca_de_ComponentesV4.5\src\DualRegFile.bde
+-- From        : C:\My_Designs\Biblioteca_de_ComponentesV4.5\src\reg_file.bde
 -- By          : Bde2Vhdl ver. 2.6
 --
 -------------------------------------------------------------------------------
@@ -22,37 +22,37 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity DualRegFile is
+entity reg_file is
   generic(
-       NBend : integer := 5;
-       NBdado : integer := 32;
-       Tread : time := 5 ns;
-       Twrite : time := 5 ns
+       NBadd : integer := 5;
+       NBdata : integer := 32;
+       t_read : time := 5 ns;
+       t_write : time := 5 ns
   );
   port(
        clk : in std_logic;
        we : in std_logic;
-       dadoina : in std_logic_vector(NBdado - 1 downto 0);
-       enda : in std_logic_vector(NBend - 1 downto 0);
-       endb : in std_logic_vector(NBend - 1 downto 0);
-       dadoouta : out std_logic_vector(NBdado - 1 downto 0);
-       dadooutb : out std_logic_vector(NBdado - 1 downto 0)
+       data_in : in std_logic_vector(NBdata - 1 downto 0);
+       adda : in std_logic_vector(NBadd - 1 downto 0);
+       addb : in std_logic_vector(NBadd - 1 downto 0);
+       data_outa : out std_logic_vector(NBdata - 1 downto 0);
+       data_outb : out std_logic_vector(NBdata - 1 downto 0)
   );
-end DualRegFile;
+end reg_file;
 
-architecture DualRegFile of DualRegFile is
+architecture reg_file of reg_file is
 
 ---- Architecture declarations -----
-type ram_type is array (0 to 2**NBend - 1)
-        of std_logic_vector (NBdado - 1 downto 0);
+type ram_type is array (0 to 2**NBadd - 1)
+        of std_logic_vector (NBdata - 1 downto 0);
 signal ram: ram_type;
 
 
 
 ---- Signal declarations used on the diagram ----
 
-signal enda_reg : std_logic_vector(NBend - 1 downto 0);
-signal endb_reg : std_logic_vector(NBend - 1 downto 0);
+signal adda_reg : std_logic_vector(NBadd - 1 downto 0);
+signal addb_reg : std_logic_vector(NBadd - 1 downto 0);
 
 begin
 
@@ -66,15 +66,15 @@ process (clk)
 begin
 	if (clk'event and clk = '1') then
           if (we = '1') then
-               ram(to_integer(unsigned(enda))) <= dadoina after Twrite;
+               ram(to_integer(unsigned(adda))) <= data_in after t_write;
           end if;
-          enda_reg <= enda;
-          endb_reg <= endb;
+          adda_reg <= adda;
+          addb_reg <= addb;
      end if;
 end process;
 
 ---- User Signal Assignments ----
-dadoouta <= ram(to_integer(unsigned (enda_reg))) after Tread;
-dadooutb <= ram(to_integer(unsigned (endb_reg))) after Tread;
+data_outa <= ram(to_integer(unsigned (adda_reg))) after t_read;
+data_outb <= ram(to_integer(unsigned (addb_reg))) after t_read;
 
-end DualRegFile;
+end reg_file;
