@@ -34,7 +34,7 @@ entity alu is
   port(
        A 		     : in 	std_logic_vector(NB - 1 downto 0);
        B 		     : in 	std_logic_vector(NB - 1 downto 0);
-       alu_ctrl	: in 	std_logic_vector(2 downto 0);
+       alu_ctrl	: in 	std_logic_vector(3 downto 0);
        N   	     : out 	std_logic;
        Z   	     : out 	std_logic;
        result 	     : out 	std_logic_vector(NB - 1 downto 0)
@@ -44,6 +44,13 @@ end alu;
 architecture alu_arch of alu is
 
 ---- Architecture declarations -----
+constant c_add_ctrl : std_logic_vector(3 downto 0) := "0000";
+constant c_sub_ctrl : std_logic_vector(3 downto 0) := "1000";
+constant c_slt_ctrl : std_logic_vector(3 downto 0) := "0010";
+constant c_sll_ctrl : std_logic_vector(3 downto 0) := "0001";
+constant c_srl_ctrl : std_logic_vector(3 downto 0) := "0101";
+constant c_sra_ctrl : std_logic_vector(3 downto 0) := "1101";
+
 signal m_result : std_logic_vector (NB - 1 downto 0) := (others => '0');
 signal m_zero 	: std_logic_vector (NB - 1 downto 0) := (others => '0');
 signal m_shamt : integer := 0;
@@ -69,12 +76,12 @@ m_srl_out <= std_logic_vector(shift_right(unsigned(A), m_shamt));
 m_sra_out <= std_logic_vector(shift_right(signed(A), m_shamt));
 
 -- Resultado da Operação
-m_result <= 	m_add_out after t_sum     when alu_ctrl = "000" else
-               m_sub_out after t_sub  	when alu_ctrl = "010" else
-               m_slt_out after t_sub     when alu_ctrl = "011" else
-               m_sll_out after t_shift  	when alu_ctrl = "100" else
-               m_srl_out after t_shift 	when alu_ctrl = "110" else
-               m_sra_out after t_shift 	when alu_ctrl = "111";
+m_result <= 	m_add_out after t_sum    when alu_ctrl = c_add_ctrl else
+               m_sub_out after t_sub  	when alu_ctrl = c_sub_ctrl else
+               m_slt_out after t_sub    when alu_ctrl = c_slt_ctrl else
+               m_sll_out after t_shift  when alu_ctrl = c_sll_ctrl else
+               m_srl_out after t_shift 	when alu_ctrl = c_srl_ctrl else
+               m_sra_out after t_shift 	when alu_ctrl = c_sra_ctrl;
 
 -- Atualização do result
 result <= m_result;
