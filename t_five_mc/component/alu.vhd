@@ -27,16 +27,16 @@ use IEEE.numeric_std.all;
 entity alu is
   generic(
        NB 	: integer := 32;
-       Tsum 	: time := 1 ns;
-       Tsub 	: time := 1.25 ns;
-       Tshift 	: time := 1 ns
+       t_sum 	: time := 1 ns;
+       t_sub 	: time := 1.25 ns;
+       t_shift	: time := 1 ns
   );
   port(
        A 		     : in 	std_logic_vector(NB - 1 downto 0);
        B 		     : in 	std_logic_vector(NB - 1 downto 0);
        alu_ctrl	: in 	std_logic_vector(2 downto 0);
-       Nflag 	     : out 	std_logic;
-       Zflag 	     : out 	std_logic;
+       N   	     : out 	std_logic;
+       Z   	     : out 	std_logic;
        result 	     : out 	std_logic_vector(NB - 1 downto 0)
   );
 end alu;
@@ -69,19 +69,19 @@ m_srl_out <= std_logic_vector(shift_right(unsigned(A), m_shamt));
 m_sra_out <= std_logic_vector(shift_right(signed(A), m_shamt));
 
 -- Resultado da Operação
-m_result <= 	m_add_out after Tsum     when alu_ctrl = "000" else
-               m_sub_out after Tsub  	when alu_ctrl = "010" else
-               m_slt_out after Tsub     when alu_ctrl = "011" else
-               m_sll_out after Tshift  	when alu_ctrl = "100" else
-               m_srl_out after Tshift 	when alu_ctrl = "110" else
-               m_sra_out after Tshift 	when alu_ctrl = "111";
+m_result <= 	m_add_out after t_sum     when alu_ctrl = "000" else
+               m_sub_out after t_sub  	when alu_ctrl = "010" else
+               m_slt_out after t_sub     when alu_ctrl = "011" else
+               m_sll_out after t_shift  	when alu_ctrl = "100" else
+               m_srl_out after t_shift 	when alu_ctrl = "110" else
+               m_sra_out after t_shift 	when alu_ctrl = "111";
 
 -- Atualização do result
 result <= m_result;
--- Atualização do Nflag
-Nflag <= m_result(NB - 1);
--- Atualização de Zflag
-Zflag <= '1' when m_result = m_zero else '0';
+-- Atualização do N 
+N     <= m_result(NB - 1);
+-- Atualização de Z 
+Z     <= '1' when m_result = m_zero else '0';
 
 
 end alu_arch;

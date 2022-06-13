@@ -12,16 +12,16 @@ end alu_tb;
     component alu
         generic(
             NB 	: integer := 32;
-            Tsum 	: time := 1 ns;
-            Tsub 	: time := 1.25 ns;
-            Tshift 	: time := 1 ns
+            t_sum 	: time := 1 ns;
+            t_sub 	: time := 1.25 ns;
+            t_shift 	: time := 1 ns
         );
         port(
             A 		: in 	std_logic_vector(NB - 1 downto 0);
             B 		: in 	std_logic_vector(NB - 1 downto 0);
             alu_ctrl	: in 	std_logic_vector(2 downto 0);
-            Nflag 	: out 	std_logic;
-            Zflag 	: out 	std_logic;
+            N 	: out 	std_logic;
+            Z 	: out 	std_logic;
             result 	: out 	std_logic_vector(NB - 1 downto 0)
         );
     end component;
@@ -36,8 +36,8 @@ end alu_tb;
                          B => Value2,
                          alu_ctrl => Operation,
                          result => ValueOut,
-                         Nflag => Negative,
-                         Zflag => Zero);
+                         N => Negative,
+                         Z => Zero);
     --  This process does the real job.
     
     process
