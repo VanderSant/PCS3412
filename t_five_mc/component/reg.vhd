@@ -31,6 +31,7 @@ entity reg is
   );
   port(
        clk : in std_logic;
+       CE : in std_logic;
        R : in std_logic;
        S : in std_logic;
        D : in std_logic_vector(NB - 1 downto 0);
@@ -49,7 +50,7 @@ begin
 ---- Processes ----
 
 regsiter_p :
-process (clk, S, R)
+process (clk, S, R, CE)
 -- Section above this comment may be overwritten according to
 -- "Update sensitivity list automatically" option status
 begin
@@ -62,7 +63,11 @@ begin
 			report "Violação de Set-up time no registrador, valor da sada indefinido = U.";
 			qi <= (others => 'U');
 		else
-			 qi <= D;
+               if CE = '1' then
+			     qi <= D;
+               else
+                    null;
+               end if;
 		end if;
 	end if;
 end process;
