@@ -56,62 +56,98 @@ architecture fd_uc of t_five_mc is
             m2_sel:     out std_logic_vector(1 downto 0); 
             m3_sel:     out std_logic_vector(1 downto 0);
             
-            mem_en:     out std_logic;
             rw:         out std_logic
     
         );
     end component uc_mc;
+
+    component ram is
+        generic(
+             BE : integer := 12;
+             BP : integer := 32;
+             file_name : string := "mram.txt";
+             Tz : time := 2 ns;
+             Twrite : time := 5 ns;
+             Tread : time := 5 ns
+        );
+        port(
+             clk, reset :   in std_logic;
+             rw :           in std_logic;
+             ender :        in std_logic_vector(BE - 1 downto 0);
+             dado_in :      in std_logic_vector(BP - 1 downto 0);
+             dado_out :     out std_logic_vector(BP - 1 downto 0)
+        );
+      end component ram;
     
     signal n_clock: std_logic;
-    signal s_branch, s_pc_en, s_ri_en, s_reg_write, s_mem_en, s_m1_sel, s_rw: std_logic;
+    signal s_branch, s_pc_en, s_ri_en, s_reg_write, s_m1_sel, s_rw: std_logic;
     signal s_alu_op, s_se_op, s_m2_sel, s_m3_sel: std_logic_vector(1 downto 0);
     signal s_opcode: std_logic_vector(6 downto 0); 
     signal imem_out, dmem_out, imem_add, dmem_add, dmem_in: std_logic_vector(31 downto 0);
 
 begin
 
-    FD : fd_mc port map(clock,
-                        reset,
+    FD : fd_mc port map(
+        clock,
+        reset,
 
-                        s_pc_en,
-                        s_ri_en,
-                        s_reg_write,
-                        s_alu_op,
-                        s_se_op,
-                        s_m1_sel,
-                        s_m2_sel,
-                        s_m3_sel,
+        s_pc_en,
+        s_ri_en,
+        s_reg_write,
+        s_alu_op,
+        s_se_op,
+        s_m1_sel,
+        s_m2_sel,
+        s_m3_sel,
 
-                        s_opcode,
-                        s_branch,
+        s_opcode,
+        s_branch,
 
-                        imem_out,
-                        dmem_out,
+        imem_out,
+        dmem_out,
 
-                        imem_add,
-                        dmem_add,
-                        dmem_in
-                        );
+        imem_add,
+        dmem_add,
+        dmem_in
+    );
 
-    UC : uc_mc port map(n_clock,
-                        reset,
+    UC : uc_mc port map(
+        n_clock,
+        reset,
 
-                        s_opcode,
-                        s_branch,
-                        
-                        s_pc_en,
-                        s_ri_en,
-                        s_reg_write,
-                        s_alu_op,
-                        s_se_op,
-                        s_m1_sel,
-                        s_m2_sel,
-                        s_m3_sel,
+        s_opcode,
+        s_branch,
+        
+        s_pc_en,
+        s_ri_en,
+        s_reg_write,
+        s_alu_op,
+        s_se_op,
+        s_m1_sel,
+        s_m2_sel,
+        s_m3_sel,
 
-                        s_mem_en,
-                        s_rw
-                        );
+        s_rw
+    );
+    
+    RAM_DMEM: ram port map( 
+        n_clock,
+        reset,
+        s_rw,
+        dmem_add,
+        dmem_in,
+        dmem_out
+    );    
 
+    RAM_IMEM: ram port map( 
+        n_clock,
+        reset,
+        '0',
+        imem_add,
+        (others => '0'),
+        imem_out
+    ); 
+      
     n_clock <= not(clock);
 
 end architecture fd_uc;

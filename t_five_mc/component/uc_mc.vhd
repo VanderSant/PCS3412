@@ -20,7 +20,6 @@ entity uc_mc is
         m2_sel:     out std_logic_vector(1 downto 0); 
         m3_sel:     out std_logic_vector(1 downto 0);
         
-        mem_en:     out std_logic;
         rw:         out std_logic
 
     );
@@ -33,7 +32,6 @@ architecture fsm of uc_mc is
     constant c_addi_ctrl : std_logic_vector(6 downto 0) := "0010011";
 
     constant c_sub_ctrl :  std_logic_vector(6 downto 0) := "0110011";
-    -- constant c_subi_ctrl : std_logic_vector(6 downto 0) := "";
 
     constant c_slt_ctrl :  std_logic_vector(6 downto 0) := "0110011";
     constant c_slti_ctrl : std_logic_vector(6 downto 0) := "0010011";
