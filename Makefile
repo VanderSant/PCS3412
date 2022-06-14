@@ -10,7 +10,7 @@
 ###############################################################################
 
 # Current project folder
-AT ?= AT1
+AT ?= t_five_mc
 
 # Include the project specif information
 include $(AT)/description.mk
