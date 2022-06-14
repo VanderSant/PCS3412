@@ -3,7 +3,7 @@
 # 07/2020
 
 # Name of all components in priority order
-CPNT_LIST := fetch mux2x1 reg
+CPNT_LIST := txt_util fetch mux2x1 reg
 
 # Name of the component to be tested
 CPNT ?= fetch

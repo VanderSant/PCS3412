@@ -85,8 +85,8 @@ begin
     )
     port map(
         Sel => pc_sel,
-        I0 => NPCJ,
-        I1 => NPC,
+        I0 => NPC,
+        I1 => NPCJ,
         O => m_mux1_out
     );
 
