@@ -67,7 +67,7 @@ begin
         end if;
     end process timing;
 
-    next_state_output: process(branch, current_state) is
+    next_state_output: process(clk, opcode, branch, current_state) is
     begin
 
         case current_state is
