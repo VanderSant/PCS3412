@@ -116,7 +116,7 @@ component reg_file is
          t_write : time := 5 ns
     );
     port(
-         clk : in std_logic;
+         clk,reset : in std_logic;
          we : in std_logic;
          adda : in std_logic_vector(NBadd - 1 downto 0);
          addb : in std_logic_vector(NBadd - 1 downto 0);
@@ -237,6 +237,7 @@ GPR: reg_file
     )
     port map(
         clk => clk,
+        reset => reset,
         we => reg_write,
         adda => m_rs1,
         addb => m_rs2,
