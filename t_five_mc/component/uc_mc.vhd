@@ -16,11 +16,11 @@ entity uc_mc is
         reg_write:  out std_logic;
         alu_op:     out std_logic_vector(1 downto 0);
         se_op:      out std_logic_vector(1 downto 0);
-        mem_en:     out std_logic;
         m1_sel:     out std_logic;
         m2_sel:     out std_logic_vector(1 downto 0); 
         m3_sel:     out std_logic_vector(1 downto 0);
         
+        mem_en:     out std_logic;
         rw:         out std_logic
 
     );
