@@ -53,7 +53,7 @@ begin
 
     process
         type pattern_type is record
-            imem_out: std_logic_vector(31 DOWNTO 0);
+            imem_out: std_logic_vector(31 downto 0);
             imem_add: std_logic_vector(31 downto 0);
             NPCJ: std_logic_vector(31 downto 0);
             pc_sel: std_logic;
@@ -96,7 +96,7 @@ begin
 
        end loop;
        assert false report "end of test" severity note;
-       --  Wait forever; this will finish the simulation.
+       finished <= '1';
        wait;
     end process;
 

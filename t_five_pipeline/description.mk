@@ -3,10 +3,10 @@
 # 07/2020
 
 # Name of all components in priority order
-CPNT_LIST := txt_util fetch mux2x1 reg
+CPNT_LIST := txt_util fetch decode mux2x1 reg reg_file sign_ext control
 
 # Name of the component to be tested
-CPNT ?= fetch
+CPNT ?= decode
 
 # Commands to prepare test files
 PREPARE_TEST :=
