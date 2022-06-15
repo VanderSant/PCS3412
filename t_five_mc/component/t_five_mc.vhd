@@ -65,7 +65,7 @@ architecture fd_uc of t_five_mc is
         generic(
              BE : integer := 12;
              BP : integer := 32;
-             file_name : string := "mram.txt";
+             file_name : string := "t_five_mc/data/mram.txt";
              Tz : time := 2 ns;
              Twrite : time := 5 ns;
              Tread : time := 5 ns
@@ -83,7 +83,7 @@ architecture fd_uc of t_five_mc is
     signal s_branch, s_pc_en, s_ri_en, s_reg_write, s_m1_sel, s_rw: std_logic;
     signal s_alu_op, s_se_op, s_m2_sel, s_m3_sel: std_logic_vector(1 downto 0);
     signal s_opcode: std_logic_vector(6 downto 0); 
-    signal imem_out, dmem_out, imem_add, dmem_add, dmem_in: std_logic_vector(31 downto 0);
+    signal s_imem_out, s_dmem_out, s_imem_add, s_dmem_add, s_dmem_in: std_logic_vector(31 downto 0);
 
 begin
 
@@ -103,12 +103,12 @@ begin
         s_opcode,
         s_branch,
 
-        imem_out,
-        dmem_out,
+        s_imem_out,
+        s_dmem_out,
 
-        imem_add,
-        dmem_add,
-        dmem_in
+        s_imem_add,
+        s_dmem_add,
+        s_dmem_in
     );
 
     UC : uc_mc port map(
@@ -134,18 +134,18 @@ begin
         n_clock,
         reset,
         s_rw,
-        dmem_add,
-        dmem_in,
-        dmem_out
+        s_dmem_add(13 downto 2),
+        s_dmem_in,
+        s_dmem_out
     );    
 
     RAM_IMEM: ram port map( 
         n_clock,
         reset,
         '0',
-        imem_add,
+        s_imem_add(13 downto 2),
         (others => '0'),
-        imem_out
+        s_imem_out
     ); 
       
     n_clock <= not(clock);
