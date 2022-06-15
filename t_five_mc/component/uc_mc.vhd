@@ -4,12 +4,25 @@ use IEEE.numeric_std.all;
 
 entity uc_mc is
     port (
-        opcode: in std_logic_vector(6 downto 0); 
-        branch: in std_logic;
-        clk_in, reset_in: in std_logic;
-        clk_out, reset_out: out std_logic;
-        pc_en, ri_en, reg_write, mem_en, rw, m1_sel: out std_logic;
-        se_op, alu_op, m2_sel, m3_sel: out std_logic_vector(1 downto 0)
+        clk, reset: in std_logic;
+
+        -- Sinais de dado
+        opcode:     in std_logic_vector(6 downto 0); 
+        branch:     in std_logic;
+
+        -- Sinais de controle
+        pc_en:      out std_logic;
+        ri_en:      out std_logic;
+        reg_write:  out std_logic;
+        alu_op:     out std_logic_vector(1 downto 0);
+        se_op:      out std_logic_vector(1 downto 0);
+        mem_en:     out std_logic;
+        m1_sel:     out std_logic;
+        m2_sel:     out std_logic_vector(1 downto 0); 
+        m3_sel:     out std_logic_vector(1 downto 0);
+        
+        rw:         out std_logic
+
     );
 end entity uc_mc;
 
@@ -47,13 +60,11 @@ architecture fsm of uc_mc is
     signal next_state, current_state: state_t := fetch;
 
 begin
-    timing: process(reset_in, clk_in) is
+    timing: process(reset, clk) is
     begin
-        clk_out <= clk_in;
-        reset_out <= reset_in;
-        if reset_in = '1' then
+        if reset = '1' then
             current_state <= fetch;
-        elsif (clk_in'event and clk_in = '1') then
+        elsif (clk'event and clk = '1') then
             current_state <= next_state;
         end if;
     end process timing;
