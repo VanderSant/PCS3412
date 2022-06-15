@@ -118,9 +118,10 @@ component reg_file is
     port(
          clk : in std_logic;
          we : in std_logic;
-         data_in : in std_logic_vector(NBdata - 1 downto 0);
          adda : in std_logic_vector(NBadd - 1 downto 0);
          addb : in std_logic_vector(NBadd - 1 downto 0);
+         addw : in std_logic_vector(NBadd - 1 downto 0);
+         data_in : in std_logic_vector(NBdata - 1 downto 0);
          data_outa : out std_logic_vector(NBdata - 1 downto 0);
          data_outb : out std_logic_vector(NBdata - 1 downto 0)
     );
@@ -237,9 +238,10 @@ GPR: reg_file
     port map(
         clk => clk,
         we => reg_write,
-        data_in => m_mux3_out,
         adda => m_rs1,
         addb => m_rs2,
+        addw => m_rd,
+        data_in => m_mux3_out,
         data_outa => m_ra,
         data_outb => m_rb
     );
