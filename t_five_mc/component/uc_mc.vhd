@@ -76,27 +76,31 @@ begin
                 if ((opcode = c_add_ctrl) and (opcode = c_slt_ctrl)) then
                     m1_sel <= '0';
                     m2_sel <= "00";
-                    m3_sel <= "10";
-                    ri_en <= '1';
+                    m3_sel <= "00";
+                    reg_write <= '1';
+                    alu_op <= "00";
+                    ri_en <= '0';
                 elsif ((opcode = c_addi_ctrl) and (opcode = c_slti_ctrl) and (opcode = c_slli_ctrl) and (opcode = c_srli_ctrl) and (opcode = c_srai_ctrl)) then
                     m1_sel <= '0';
                     m2_sel <= "01";
-                    m3_sel <= "10";
-                    ri_en <= '1';
+                    m3_sel <= "00";
+                    reg_write <= '1';
+                    se_op <= "00";
+                    alu_op <= "01";
+                    ri_en <= '0';
                 elsif (opcode = c_lw_ctrl) then
                     alu_op <= "10";
                     se_op <= "00";
-                    mem_en <= '1';
-                    rw <= '1';
+                    rw <= '0';
                     m1_sel <= '0';
                     m2_sel <= "01";
                     next_state <= st_lw_2;
                 elsif (opcode = c_sw_ctrl) then
                     alu_op <= "10";
                     se_op <= "01";
+                    rw <= '1';
                     m1_sel <= '0';
                     m2_sel <= "01";
-                    mem_en <= '1';
                 elsif ((opcode = c_beq_ctrl) and (opcode = c_bne_ctrl) and (opcode = c_blt_ctrl)) then
                     alu_op <= "11";
                     se_op <= "10";
@@ -106,14 +110,18 @@ begin
                         next_state <= st_beq_bne_blt_2;
                     end if;
                 elsif (opcode = c_jal_ctrl) then 
-                    m1_sel <= '0';
+                    m1_sel <= '1';
                     m2_sel <= "01";
+                    alu_op <= "10";
+                    se_op <= "11";
                     pc_en <= '1';
                     m3_sel <= "10";
                     reg_write <= '1';
                 elsif (opcode = c_jalr_ctrl) then
-                    m1_sel <= '1';
+                    m1_sel <= '0';
                     m2_sel <= "01";
+                    alu_op <= "10";
+                    se_op <= "00";
                     pc_en <= '1';
                     m3_sel <= "10";
                     reg_write <= '1';
@@ -122,6 +130,8 @@ begin
                 reg_write <= '1';
                 m3_sel <= "01";
             when st_beq_bne_blt_2 => 
+                alu_op <= "10";
+                se_op <= "10";
                 m1_sel <= '1';
                 m2_sel <= "01";
                 pc_en <= '1';
