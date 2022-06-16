@@ -21,10 +21,11 @@ architecture behav of t_five_mc_tb is
     signal clk:          std_logic := '0';
     signal rst:          std_logic := '0';
 
-    -- constant PERIOD : time := 20 ns;
-    -- signal finished: boolean := false;
+    constant PERIOD : time := 20 ns;
+    signal finished: boolean := false;
 
 begin
+    clk <= not clk after PERIOD/2 when not finished else '0';
 
     t_five_mc_0: t_five_mc port map(
         clk,
@@ -38,13 +39,9 @@ begin
         wait for 50 ns;
 
         rst <= '0';
+        wait for 12 * PERIOD;
+        finished <= true;
         wait;
     end process;
-
-    clock_gen: process
-    begin
-        clk <= '0', '1' after 20 ns;
-        wait for 40 ns;
-    end process clock_gen;
 
 end behav;

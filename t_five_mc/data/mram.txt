@@ -1,2 +1,2 @@
-000 4 -- Endereço inicial (00) e número de palavras (4) a serem carregadas
-0F0F1A1A 2B2B3C3C 4D4D5E5E 60607878 -- Conteúdo das quatro palavras de 32 bits a carregar
+000 3 -- Endereço inicial (00) e número de palavras (4) a serem carregadas
+00300393 00400413 008384B3 -- Conteúdo das quatro palavras de 32 bits a carregar
