@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+  pcs3212:
+    container_name: pcs3212
+    build: . # use the current directory (Dockerfile)
+    restart: unless-stopped
+    volumes:
+      - ./assets:/assets
+    ports:
+      - 5000:5000
