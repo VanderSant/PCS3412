@@ -10,7 +10,7 @@
 ###############################################################################
 
 # Current project folder
-AT ?= t_five_pipeline
+AT ?= AT1
 
 # Include the project specif information
 include $(AT)/description.mk
