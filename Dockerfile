@@ -1,20 +1,24 @@
 FROM ubuntu:20.04
 
-ENV WORKDIR=/usr/app \
+# Change the default shell to Bash
+SHELL [ "/bin/bash" , "-c" ]
+
+ENV WORKDIR=/usr/app/src \
     TZ=America \
     DEBIAN_FRONTEND=noninteractive
 
 RUN mkdir /usr/deps
-WORKDIR /usr/app
+WORKDIR /usr/app/src
 
 # Instalations
-RUN apt update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     git \
     wget \
     ghdl \
     gtkwave \
     make \
-    tzdata
+    tzdata \
+    nano
 
-CMD ["cd","src"]
-# COPY . /usr/app
+# display configuration
+RUN echo "export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}'):0" >> ~/.bashrc
