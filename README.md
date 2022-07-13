@@ -78,15 +78,38 @@ OBS2: É necessário analisar os componentes antes de testar, e após qualquer m
 
 ## Instalando o necessário
 
-### GHDL
+As dependências desse repositório podem ser instaladas manualmente ou executadas diretamente dentro de um container docker. Caso você não esteja usando linux, recomendo que use o dockerfile direto para facilitar.
 
-Em breve
+### - Instalando manualmente
+#### Make
 
-### GtkWave
+Para instalar o Make, basta executar os seguintes comandos.
 
-Para instalar o GtkWave, basta executar os seguintes comandos.
+```bash
+sudo apt-get install build-essential
+```
+
+#### GHDL e GtkWave
+
+Para instalar o GtkWave e Ghdl, basta executar os seguintes comandos.
 
 ```bash
 sudo apt update
 sudo apt-get install ghdl gtkwave
+```
+
+### - Instalando com docker
+
+Siga o guia oficial do *docker* e *docker-compose* para instalação clicando [aqui](https://docs.docker.com/engine/install/) 
+
+Depois que o docker estiver instalado, basta executar para baixar a imagem docker e colocar o container no ar:
+
+```bash
+sudo chmod +x run run_docker.sh
+./run_docker.sh
+```
+
+Feito isso, toda vez que for usar o repositório basta usar o comando:
+```bash
+./run_docker.sh
 ```

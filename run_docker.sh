@@ -7,7 +7,7 @@ if [[ $IMAGE ]] ; then
 		SRCDIR="$( cd $1 && pwd )"
 	else
 		GITDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-		SRCDIR="$GITDIR/src"
+		SRCDIR="$GITDIR"
 	fi
 
 	if [[ "$2" ]]; then
