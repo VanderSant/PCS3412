@@ -37,14 +37,14 @@ architecture fsm of uc_mc is
     constant c_jalr_ctrl : std_logic_vector(6 downto 0) := "1100111";
 
 
-    type state_t is (idle_s, fetch_s, decode_s, r_type_s, i_type_s, lw1_s, lw2_s, sw_s, b1_s, b2_s, jal_s, jalr_s);
-    signal next_state, current_state: state_t := idle_s;
+    type state_t is (fetch_s, decode_s, r_type_s, i_type_s, lw1_s, lw2_s, sw_s, b1_s, b2_s, jal_s, jalr_s);
+    signal next_state, current_state: state_t := fetch_s;
 
 begin
     timing: process(reset, clk) is
     begin
         if reset = '1' then
-            current_state <= idle_s;
+            current_state <= fetch_s;
         elsif (clk'event and clk = '1') then
             current_state <= next_state;
         end if;
@@ -52,8 +52,7 @@ begin
 
     -- Next state logic
     next_state <=
-        fetch_s when (current_state = idle_s) or
-                     (current_state = r_type_s) or
+        fetch_s when (current_state = r_type_s) or
                      (current_state = i_type_s) or
                      (current_state = lw2_s) or
                      (current_state = sw_s) or
@@ -71,7 +70,7 @@ begin
         b2_s when (current_state = b1_s) and (branch = '1') else
         jal_s when (current_state = decode_s) and (opcode = c_jal_ctrl) else
         jalr_s when (current_state = decode_s) and (opcode = c_jalr_ctrl) else
-        idle_s;
+        fetch_s;
     
     -- Signals logic
     pc_en       <= '1' when (current_state = fetch_s) or
