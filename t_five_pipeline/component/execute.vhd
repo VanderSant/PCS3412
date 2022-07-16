@@ -8,18 +8,20 @@ entity execute is
         clk, reset: in std_logic;
 
         --interface ID/EX
-        RD_out: in std_logic_vector(137 downto 0);     
+        ID_EXout : in std_logic_vector(137 downto 0);     
         
-        --interface EX/MEM
-        RE_out: out std_logic_vector(70 downto 0);
-
         --sinais de controle
         cWbi : in std_logic_vector(1 downto 0);
-        cMi: in std_logic_vector(2 downto 0);
-        cExi: in std_logic_vector(5 downto 0);
+        cMi : in std_logic_vector(2 downto 0);
+        cExi : in std_logic_vector(5 downto 0);
+        ckEX_M : in std_logic;
+        
+        --interface EX/MEM
+        EX_Mo : out std_logic_vector(101 downto 0);
 
-        cWbo: out std_logic_vector(1 downto 0);
-        cMo: out std_logic_vector(2 downto 0)
+        cWbo : out std_logic_vector(1 downto 0);
+        cMo: out std_logic_vector(2 downto 0);
+        zeroo: out std_logic
     );
 end entity;
 
@@ -81,7 +83,6 @@ architecture execute_arch of execute is
             alu_ctrl    : out std_logic_vector(3 downto 0)
         );
     end component;
-
     signal instruction, ext_out, regA, regB, mux1_out, NPCJ, NPC, ULA_out : std_logic_vector(31 downto 0);
     
     signal  ULA_op, se_op : std_logic_vector(1 downto 0);
@@ -93,14 +94,14 @@ architecture execute_arch of execute is
     signal zero, negative, reg_dst, ULA_src: std_logic;
 begin
 
-    rd <= RD_out(4 downto 0);
-    rt <= RD_out(9 downto 5);
-    instruction <= RD_out(41 downto 10);
+    rd <= ID_EXout (4 downto 0);
+    rt <= ID_EXout (9 downto 5);
+    instruction <= ID_EXout (41 downto 10);
     funct7 <= instruction(31 downto 25);
     funct3 <= instruction(14 downto 12);
-    regA <= RD_out(73 downto 42);
-    regB <= RD_out(105 downto 74);
-    NPC <= RD_out(137 downto 106);
+    regA <= ID_EXout (73 downto 42);
+    regB <= ID_EXout (105 downto 74);
+    NPC <= ID_EXout (137 downto 106);
 
     reg_dst <= cExi(5);
     ULA_src <= cExi(4);
@@ -177,10 +178,12 @@ begin
     cWbo <= cWbi;
     cMo <= cMi;
 
-    RE_out(4 downto 0) <= end_reg;
-    RE_out(36 downto 5) <= ULA_out;
-    RE_out(37) <= Zero;
-    RE_out(38) <= Negative;
-    RE_out(70 downto 39) <= NPCJ;
+    EX_Mo (31 downto 0) <= NPCJ;
+    EX_Mo (63 downto 32) <= ULA_out;
+    EX_Mo (95 downto 64) <= regA;
+    EX_Mo (100 downto 96) <= end_reg;
+    EX_Mo (101) <= ckEX_M;
+
+    zeroo <= zero;
 
 end execute_arch ; -- execute_arch
