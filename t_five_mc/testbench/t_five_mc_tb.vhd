@@ -36,10 +36,10 @@ begin
     begin
         -- rst inputs
         rst <= '1';
-        wait for 50 ns;
+        wait for PERIOD * 3/2;
 
         rst <= '0';
-        wait for 12 * PERIOD;
+        wait for PERIOD * 24;
         finished <= true;
         wait;
     end process;
