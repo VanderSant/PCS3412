@@ -79,7 +79,6 @@ architecture fd_uc of t_five_mc is
         );
       end component ram;
     
-    signal n_clock: std_logic;
     signal s_branch, s_pc_en, s_ri_en, s_reg_write, s_m1_sel, s_rw: std_logic;
     signal s_alu_op, s_se_op, s_m2_sel, s_m3_sel: std_logic_vector(1 downto 0);
     signal s_opcode: std_logic_vector(6 downto 0); 
@@ -111,8 +110,8 @@ begin
         s_dmem_in
     );
 
-    UC : uc_mc port map(
-        n_clock,
+    UC : entity work.uc_mc(state_qualifier) port map(
+        clock,
         reset,
 
         s_opcode,
@@ -131,7 +130,7 @@ begin
     );
     
     RAM_DMEM: ram port map( 
-        n_clock,
+        clock,
         reset,
         s_rw,
         s_dmem_add(13 downto 2),
@@ -140,14 +139,12 @@ begin
     );    
 
     RAM_IMEM: ram port map( 
-        n_clock,
+        clock,
         reset,
         '0',
         s_imem_add(13 downto 2),
         (others => '0'),
         s_imem_out
     ); 
-      
-    n_clock <= not(clock);
 
 end architecture fd_uc;
