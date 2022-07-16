@@ -111,7 +111,7 @@ begin
         s_dmem_in
     );
 
-    UC : uc_mc port map(
+    UC : entity work.uc_mc(state_qualifier) port map(
         n_clock,
         reset,
 
