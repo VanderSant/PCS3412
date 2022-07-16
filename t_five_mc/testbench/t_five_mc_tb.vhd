@@ -21,7 +21,7 @@ architecture behav of t_five_mc_tb is
     signal clk:          std_logic := '0';
     signal rst:          std_logic := '0';
 
-    constant PERIOD : time := 20 ns;
+    constant PERIOD : time := 9.75 ns;
     signal finished: boolean := false;
 
 begin
