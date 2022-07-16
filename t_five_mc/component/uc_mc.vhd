@@ -150,7 +150,7 @@ CM: rom
     generic map(
         BE => 4,
         BP => 24,
-        file_name => "t_five_mc/data/mrom.txt",
+        file_name => "t_five_mc/data/mcontrol.txt",
         Tread => 5 ns
     )
     port map(
