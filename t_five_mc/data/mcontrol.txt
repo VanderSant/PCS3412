@@ -1,4 +1,2 @@
-test - estado true - estado false - saida --- apagar depois
-00 -- endereco inicial --- apagar depois
-110 0001 1000 001000000000
-110 
+00 16 -- Endereco inicial e numero de palavras
+023A30 D44000 86C000 A8A000 000400 000508 B2E000 110208 00060A 000249 5B6000 F80380 0012A8 7DE000 0016EC 00160C -- Palavras da memoria
