@@ -1,0 +1,4 @@
+test - estado true - estado false - saida --- apagar depois
+00 -- endereco inicial --- apagar depois
+110 0001 1000 001000000000
+110 
