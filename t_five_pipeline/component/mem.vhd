@@ -48,7 +48,16 @@ architecture mem_arch of mem is
 
     signal rd: std_logic_vector(4 downto 0);
 
-    signal mem_read, mem_write, zero, negative, should_branch, uncond_branch, cond_branch, jump_type, write_mem: std_logic;
+    signal mem_read, 
+           mem_write, 
+           zero, 
+           negative, 
+           should_branch, 
+           uncond_branch, 
+           cond_branch, 
+           jump_type, 
+           write_mem,
+           and_out: std_logic;
 begin
 
     rd              <= EX_MEM(4 downto 0);
@@ -62,8 +71,9 @@ begin
     jump_type       <= EX_MEM(136);
     write_mem       <= EX_MEM(137);
     cWbo            <= EX_MEM(139 downto 138);
-      
-    PCsrc <= (should_branch and cond_branch) or uncond_branch;
+
+    and_out <= should_branch and cond_branch after 0.25 ns;
+    PCsrc <= and_out or uncond_branch after 0.25 ns;
 
     MUX3: mux2x1
     generic map(
