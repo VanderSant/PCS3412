@@ -27,9 +27,9 @@ architecture decode_arch of decode is
 
     -- Dados para ID/EX
     signal regA, regB : std_logic_vector(31 downto 0) := (others => '0');
-    signal cExo : std_logic_vector(4 downto 0);
-    signal cMo : std_logic_vector(3 downto 0);
-    signal cWbo : std_logic_vector(1 downto 0);
+    signal cExo : std_logic_vector(4 downto 0) := (others => '0');
+    signal cMo : std_logic_vector(3 downto 0) := (others => '0');
+    signal cWbo : std_logic_vector(1 downto 0) := (others => '0');
 
     -- Sinais internos
     signal rs1, rs2 : std_logic_vector(4 downto 0) := (others => '0');

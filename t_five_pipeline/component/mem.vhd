@@ -42,11 +42,11 @@ architecture mem_arch of mem is
         );
     end component;
 
-    signal NPCJrel, NPC, ALU_out, regB, ex_data, mem_data : std_logic_vector(31 downto 0); 
+    signal NPCJrel, NPC, ALU_out, regB, ex_data, mem_data : std_logic_vector(31 downto 0) := (others => '0'); 
 
-    signal cWbo: std_logic_vector(1 downto 0);
+    signal cWbo: std_logic_vector(1 downto 0) := (others => '0');
 
-    signal rd: std_logic_vector(4 downto 0);
+    signal rd: std_logic_vector(4 downto 0) := (others => '0');
 
     signal mem_read, 
            mem_write, 
@@ -57,7 +57,7 @@ architecture mem_arch of mem is
            cond_branch, 
            jump_type, 
            write_mem,
-           and_out: std_logic;
+           and_out: std_logic := '0';
 begin
 
     rd              <= EX_MEM(4 downto 0);

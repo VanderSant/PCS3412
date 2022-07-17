@@ -82,27 +82,27 @@ architecture execute_arch of execute is
     end component mux2x1_1b;
 
     -- logic signals input
-    signal inst, regA, regB, NPC : std_logic_vector(31 downto 0);
-    signal cEXo : std_logic_vector(4 downto 0);
-    signal cMo : std_logic_vector(3 downto 0);
-    signal cWBo : std_logic_vector(1 downto 0);
+    signal inst, regA, regB, NPC : std_logic_vector(31 downto 0) := (others => '0');
+    signal cEXo : std_logic_vector(4 downto 0) := (others => '0');
+    signal cMo : std_logic_vector(3 downto 0) := (others => '0');
+    signal cWBo : std_logic_vector(1 downto 0) := (others => '0');
 
-    signal funct3 : std_logic_vector(2 downto 0);
-    signal funct7 : std_logic_vector(6 downto 0);
-    signal rd : std_logic_vector(4 downto 0);
+    signal funct3 : std_logic_vector(2 downto 0) := (others => '0');
+    signal funct7 : std_logic_vector(6 downto 0) := (others => '0');
+    signal rd : std_logic_vector(4 downto 0) := (others => '0');
 
-    signal ula_src : std_logic;
-    signal ula_op, se_op : std_logic_vector(1 downto 0);
+    signal ula_src : std_logic := '0';
+    signal ula_op, se_op : std_logic_vector(1 downto 0) := (others => '0');
 
     -- logic signals output
-    signal NPCJrel : std_logic_vector(31 downto 0); 
+    signal NPCJrel : std_logic_vector(31 downto 0) := (others => '0'); 
 
     -- aux signals
-    signal sig_ext_out, mux1_out : std_logic_vector(31 downto 0);
-    signal alu_control_out : std_logic_vector(3 downto 0);
+    signal sig_ext_out, mux1_out : std_logic_vector(31 downto 0) := (others => '0');
+    signal alu_control_out : std_logic_vector(3 downto 0) := (others => '0');
 
     signal Nflag, Zflag, xor_out, should_branch : std_logic;
-    signal ULAOut : std_logic_vector(31 downto 0); 
+    signal ULAOut : std_logic_vector(31 downto 0) := (others => '0'); 
 
     begin
         -- ID_EX divison
