@@ -8,21 +8,23 @@ entity fetch is
         clk, reset: in std_logic;
 
         -- Sinais de controle
-        pc_sel     : in std_logic;
+        pc_src     : in std_logic;
         
+        -- Branches
+        NPCJ       : in    std_logic_vector(31 downto 0);
+
         -- Interface com memoria de instrucoes
         imem_out   : in    std_logic_vector(31 downto 0);
         imem_add   : out   std_logic_vector(31 downto 0);
 
         -- Interface IF/ID
-        RI_out     : out   std_logic_vector(63 downto 0);
+        IF_ID     : out   std_logic_vector(63 downto 0)
 
-        -- Branches
-        NPCJ       : in    std_logic_vector(31 downto 0)
     );
 end fetch;
 
 architecture fetch_arch of fetch is
+    constant adder_delay : time := 1 ns;
 
     component mux2x1 is
         generic(
@@ -57,10 +59,10 @@ architecture fetch_arch of fetch is
 
     signal NPC : std_logic_vector(31 downto 0) := (others => '0'); 
     
-    signal m_mux1_out, m_pc_q : std_logic_vector(31 downto 0) := (others => '0');
+    signal m_pc_d, m_pc_q : std_logic_vector(31 downto 0) := (others => '0');
 begin
 
-    PC: reg
+PC: reg
     generic map(
         NB => 32,
         t_prop => 1 ns,
@@ -73,28 +75,28 @@ begin
         CE => '1',
         R => reset,
         S => '0',
-        D => m_mux1_out,
+        D => m_pc_d,
         Q => m_pc_q
     );
 
-    MUX1: mux2x1
+MUX1: mux2x1
     generic map(
         NB => 32,
         t_sel => 0.5 ns,
         t_data => 0.25 ns
     )
     port map(
-        Sel => pc_sel,
+        Sel => pc_src,
         I0 => NPC,
         I1 => NPCJ,
-        O => m_mux1_out
+        O => m_pc_d
     );
 
-    NPC <= std_logic_vector(unsigned(m_pc_q) + to_unsigned(4, 32));
+    NPC <= std_logic_vector(unsigned(m_pc_q) + to_unsigned(4, 32)) after adder_delay;
 
     imem_add <= m_pc_q;
 
-    RI_out(63 downto 32) <= NPC;
-    RI_out(31 downto 0)  <= imem_out;
+    IF_ID(63 downto 32) <= NPC;
+    IF_ID(31 downto 0)  <= imem_out;
 
 end fetch_arch;
