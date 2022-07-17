@@ -43,7 +43,7 @@ architecture reg_arch of reg is
 
 ---- Signal declarations used on the diagram ----
 
-signal qi : std_logic_vector(NB - 1 downto 0);
+signal qi : std_logic_vector(NB - 1 downto 0) := (others => '0');
 
 begin
 
