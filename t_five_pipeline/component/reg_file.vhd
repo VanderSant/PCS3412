@@ -60,18 +60,16 @@ begin
      if (reset = '1') then
           regs <= (others => (others => '0'));
 	elsif (clk'event and clk = '1') then
-          data_outa <= regs(to_integer(unsigned (adda))) after t_read;
-          data_outb <= regs(to_integer(unsigned (addb))) after t_read;
-          
-     elsif (clk'event and clk = '0') then
           if (we = '1') then
-               regs(to_integer(unsigned(addw))) <= data_in after t_write;
+               if to_integer(unsigned(addw)) /= 0 then
+                    regs(to_integer(unsigned(addw))) <= data_in after t_write;
+               end if;
           end if;
      end if;
 end process;
 
 ---- User Signal Assignments ----
-
-
+data_outa <= regs(to_integer(unsigned (adda))) after t_read;
+data_outb <= regs(to_integer(unsigned (addb))) after t_read;
 
 end reg_file;
