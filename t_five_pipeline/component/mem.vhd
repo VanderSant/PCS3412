@@ -7,89 +7,98 @@ entity mem is
     port(
         clk, reset: in std_logic;
 
-        --interface ID/EX
-        RE_out: in std_logic_vector(70 downto 0);     
-        
         --interface EX/MEM
-        RM_out: out std_logic_vector(?? downto 0);
+        EX_MEM:     in std_logic_vector(139 downto 0);     
 
-        --sinais de controle
-        cWbi : in std_logic_vector(1 downto 0);
-        cMi: in std_logic_vector(2 downto 0);
+        --interface MEM/WB
+        MEM_WB:     out std_logic_vector(70 downto 0);
 
-        cWbo: out std_logic_vector(1 downto 0);
+        -- interface com memória
+        rw:         out std_logic;
+        address:    out std_logic_vector(31 downto 0);
+        data_write: out std_logic_vector(31 downto 0);
+        data_read:  in std_logic_vector(31 downto 0);
 
         -- interface com fetch
-        NPCJ: out std_logic_vector(31:0);
-        pcsrc: out std_logic;
+        NPCJ:       out std_logic_vector(31 downto 0);
+        PCsrc:      out std_logic
     );
 end entity;
 
 
 architecture mem_arch of mem is
 
-    component ram is
+    component mux2x1 is
         generic(
-             BE : integer := 12;
-             BP : integer := 32;
-             file_name : string := "t_five_mc/data/mram.txt";
-             Tz : time := 2 ns;
-             Twrite : time := 5 ns;
-             Tread : time := 5 ns
+            NB : integer := 32;
+            t_sel : time := 0.5 ns;
+            t_data : time := 0.25 ns
         );
         port(
-             clk, reset :   in std_logic;
-             rw :           in std_logic;
-             ender :        in std_logic_vector(BE - 1 downto 0);
-             dado_in :      in std_logic_vector(BP - 1 downto 0);
-             dado_out :     out std_logic_vector(BP - 1 downto 0)
+            Sel : in std_logic;
+            I0 : in std_logic_vector(NB - 1 downto 0);
+            I1 : in std_logic_vector(NB - 1 downto 0);
+            O : out std_logic_vector(NB - 1 downto 0)
         );
-      end component ram;
+    end component;
 
+    signal NPCJrel, NPC, ALU_out, regB, ex_data, mem_data : std_logic_vector(31 downto 0); 
 
-    signal NPCJ_in, mem_address, mem_data_in, mem_data_out : std_logic_vector(31 downto 0); 
+    signal cWbo: std_logic_vector(1 downto 0);
 
-    signal end_reg: std_logic_vector(4 downto 0);
+    signal rd: std_logic_vector(4 downto 0);
 
-    signal mem_read, mem_write, zero, negative;
+    signal mem_read, mem_write, zero, negative, should_branch, uncond_branch, cond_branch, jump_type, write_mem: std_logic;
 begin
 
-    end_reg     <= RE_out(4 downto 0);
-    mem_address <= RE_out(36 downto 5);
-    zero        <= RE_out(37);
-    negative    <= RE_out(38); 
-    NPCJ_in     <= RE_out(70 downto 39);
-    mem_data    <= RE_out(102 downto 71);
-    
-    mem_read    <= cMi(1);
-    reg_out     <= mem_address;
-
-    RAM: ram
-    generic map(
-         BE => 12;
-         BP => 32;
-         file_name => "t_five_mc/data/mram.txt";
-         Tz => 2 ns;
-         Twrite => 5 ns;
-         Tread => 5 ns
-    );
-    port map(
-         clk => clk;
-         reset => reset;
-         rw => mem_read;
-         ender =>   mem_address;
-         dado_in => mem_data_in;
-         dado_out => mem_data_out
-    );
+    rd              <= EX_MEM(4 downto 0);
+    regB            <= EX_MEM(36 downto 5);
+    ALU_out         <= EX_MEM(68 downto 37);
+    should_branch   <= EX_MEM(69); 
+    NPCJrel         <= EX_MEM(101 downto 70);
+    NPC             <= EX_MEM(133 downto 102);
+    cond_branch     <= EX_MEM(134);
+    uncond_branch   <= EX_MEM(135);
+    jump_type       <= EX_MEM(136);
+    write_mem       <= EX_MEM(137);
+    cWbo            <= EX_MEM(139 downto 138);
       
+    PCsrc <= (should_branch and cond_branch) or uncond_branch;
 
+    MUX3: mux2x1
+    generic map(
+        NB => 32,
+        t_sel => 0.5 ns,
+        t_data => 0.25 ns
+    )
+    port map(
+        Sel => jump_type,
+        I0 => NPCJrel,
+        I1 => ALU_out,
+        O => NPCJ
+    );
 
-    cWbo <= cWbi;
+    MUX4: mux2x1
+    generic map(
+        NB => 32,
+        t_sel => 0.5 ns,
+        t_data => 0.25 ns
+    )
+    port map(
+        Sel => uncond_branch,
+        I0 => ALU_out,
+        I1 => NPC,
+        O => ex_data
+    );
 
-    RM_out(4 downto 0)      <= end_reg;
-    RM_out(36 downto 5)     <= reg_out;
-    RM_out(68 downto 37)    <= mem_data_out;
-    
-    pcsrc <= zero and cMi(0);
+    data_write <= mem_data;
+    rw <= write_mem;
+    address <= ALU_out;
+    data_write <= regB;
+
+    MEM_WB(4 downto 0)      <= rd;
+    MEM_WB(36 downto 5)     <= mem_data;
+    MEM_WB(68 downto 37)    <= ex_data;
+    MEM_WB(70 downto 69)    <= cWbo;
 
 end mem_arch ; -- mem_arch
