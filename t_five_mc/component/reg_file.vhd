@@ -61,7 +61,9 @@ begin
           regs <= (others => (others => '0'));
 	elsif (clk'event and clk = '1') then
           if (we = '1') then
-               regs(to_integer(unsigned(addw))) <= data_in after t_write;
+               if to_integer(unsigned(addw)) /= 0 then
+                    regs(to_integer(unsigned(addw))) <= data_in after t_write;
+               end if;
           end if;
      end if;
 end process;

@@ -7,30 +7,32 @@ entity decode is
     port(
         clk, reset: in std_logic;
 
-        --interface IF/ID
-        RI_out: in std_logic_vector(63 downto 0);
+        -- Interface IF/ID
+        IF_ID: in std_logic_vector(63 downto 0);
 
-        --interface ID/EX
-        RD_out: out std_logic_vector(137 downto 0);     
+        -- Interface ID/EX
+        ID_EX: out std_logic_vector(138 downto 0);     
 
-        --Interface com WB
-        enderW: in std_logic_vector(4 downto 0);
-        dataW: in std_logic_vector(31 downto 0);
-
-        --sinais de controle
-        cWbo: out std_logic_vector(1 downto 0);
-        cMo: out std_logic_vector(2 downto 0);
-        cExo: out std_logic_vector(5 downto 0);
-
-        reg_write: in std_logic
+        -- Entradas
+        reg_write: in std_logic;
+        rd: in std_logic_vector(4 downto 0);
+        data_write: in std_logic_vector(31 downto 0)
 
     );
 end entity;
 
 architecture decode_arch of decode is
+    -- Dados do IF/ID
+    signal instruction, NPC : std_logic_vector(31 downto 0) := (others => '0');
 
-    signal instruction, regA, regB, NPC : std_logic_vector(31 downto 0) := (others => '0');
-    signal rt, rd : std_logic_vector(4 downto 0) := (others => '0');
+    -- Dados para ID/EX
+    signal regA, regB : std_logic_vector(31 downto 0) := (others => '0');
+    signal cExo : std_logic_vector(4 downto 0) := (others => '0');
+    signal cMo : std_logic_vector(3 downto 0) := (others => '0');
+    signal cWbo : std_logic_vector(1 downto 0) := (others => '0');
+
+    -- Sinais internos
+    signal rs1, rs2 : std_logic_vector(4 downto 0) := (others => '0');
     
     component control is
         port (
@@ -39,8 +41,8 @@ architecture decode_arch of decode is
 
             -- output
             cWbo: out std_logic_vector(1 downto 0);
-            cMo: out std_logic_vector(2 downto 0);
-            cExo: out std_logic_vector(5 downto 0)
+            cMo: out std_logic_vector(3 downto 0);
+            cExo: out std_logic_vector(4 downto 0)
 
         ) ;
     end component;
@@ -66,14 +68,13 @@ architecture decode_arch of decode is
       end component;
 
 begin
+    NPC <= IF_ID(63 downto 32);
+    instruction <= IF_ID(31 downto 0);
 
-    instruction <= RI_out(31 downto 0);
-    NPC <= RI_out(63 downto 32);
+    rs2 <= instruction(24 downto 20);
+    rs1 <= instruction(19 downto 15);
 
-    rd <= instruction(11 downto 7);
-    rt <= instruction(19 downto 15);
-
-    UC: control
+UC: control
     port map (
         opcode => instruction(6 downto 0),
         cWbo => cWbo,
@@ -81,7 +82,7 @@ begin
         cExo => cExo
     );
 
-    GPR: reg_file
+GPR: reg_file
     generic map(
         NBadd => 5,
         NBdata => 32,
@@ -90,20 +91,21 @@ begin
         )
     port map(
         clk => clk,
-        reset => '0',
+        reset => reset,
         we => reg_write,
-        adda => instruction(19 downto 15),
-        addb => instruction(24 downto 20),
-        addw => enderW,
-        data_in => dataW,
+        adda => rs1,
+        addb => rs2,
+        addw => rd,
+        data_in => data_write,
         data_outa => regA,
         data_outb => regB
     );
         
-    RD_out(4 downto 0) <= rd;
-    RD_out(9 downto 5) <= rt;
-    RD_OUT(41 downto 10) <= instruction;
-    RD_out(73 downto 42) <= regA;
-    RD_out(105 downto 74) <= regB;
-    RD_out(137 downto 106) <= NPC;
+    ID_EX(138 downto 137) <= cWbo;
+    ID_EX(136 downto 133) <= cMo;
+    ID_EX(132 downto 128) <= cExo;
+    ID_EX(127 downto 96) <= NPC;
+    ID_EX(95 downto 64) <= regA;
+    ID_EX(63 downto 32) <= regB;
+    ID_EX(31 downto 0) <= instruction;
 end architecture decode_arch;

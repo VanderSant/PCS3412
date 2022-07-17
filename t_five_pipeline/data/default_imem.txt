@@ -1,0 +1,2 @@
+000 8 -- Endereço inicial e número de palavras a serem carregadas
+00300393 00400413 00000113 00000113 00000113 00000113 00000113 008384B3 -- Conteúdo das três palavras de 32 bits a carregar
