@@ -160,20 +160,20 @@ architecture structural of t_five_pipeline is
 begin
 IMEM: rom
     generic map(
-        BE => 30,
+        BE => 12,
         BP => 32,
         file_name => "t_five_pipeline/data/default_imem.txt",
         Tread => 5 ns
     )    
     port map( 
         reset => reset,
-        ender => m_imem_add(31 downto 2),
+        ender => m_imem_add(13 downto 2),
         dado_out => m_imem_out
     );
 
 DMEM: ram
     generic map(
-        BE => 30,
+        BE => 12,
         BP => 32,
         file_name => "t_five_pipeline/data/default_dmem.txt",
         Tz => 2 ns,
@@ -184,10 +184,10 @@ DMEM: ram
         clk => clock,
         reset => reset,
         rw => m_rw,
-        ender => m_dmem_add(31 downto 2),
+        ender => m_dmem_add(13 downto 2),
         dado_in => m_dmem_in,
         dado_out => m_dmem_out
-    );    
+    );   
 
 IF_ID: reg
     generic map(
