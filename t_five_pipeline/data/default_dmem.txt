@@ -1,0 +1,2 @@
+00000000 1 -- Uma palavra de teste
+00000007 -- Sete
