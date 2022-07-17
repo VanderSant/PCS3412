@@ -45,8 +45,8 @@ MUX5: mux2x1
     )
     port map(
         Sel => MEM_WB(70),
-        I0 => MEM_WB,
-        I1 => MEM_WB,
+        I0 => MEM_WB(68 downto 37),
+        I1 => MEM_WB(36 downto 5),
         O => m_data_write
     );
 
