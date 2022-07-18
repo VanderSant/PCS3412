@@ -1,0 +1,2 @@
+000 6 -- Apenas uma instrução
+0A002283 00000113 00000113 00000113 00000113 00528033 -- lw, nop, nop, nop, nop, add
