@@ -42,15 +42,13 @@ architecture mem_arch of mem is
         );
     end component;
 
-    signal NPCJrel, NPC, ALU_out, regB, ex_data, mem_data : std_logic_vector(31 downto 0) := (others => '0'); 
+    signal m_NPCJ, NPCJrel, NPC, ALU_out, regB, ex_data : std_logic_vector(31 downto 0) := (others => '0'); 
 
     signal cWbo: std_logic_vector(1 downto 0) := (others => '0');
 
     signal rd: std_logic_vector(4 downto 0) := (others => '0');
 
-    signal mem_read, 
-           mem_write, 
-           zero, 
+    signal zero, 
            negative, 
            should_branch, 
            uncond_branch, 
@@ -72,9 +70,6 @@ begin
     write_mem       <= EX_MEM(137);
     cWbo            <= EX_MEM(139 downto 138);
 
-    and_out <= should_branch and cond_branch after 0.25 ns;
-    PCsrc <= and_out or uncond_branch after 0.25 ns;
-
     MUX3: mux2x1
     generic map(
         NB => 32,
@@ -85,7 +80,7 @@ begin
         Sel => jump_type,
         I0 => NPCJrel,
         I1 => ALU_out,
-        O => NPCJ
+        O => m_NPCJ
     );
 
     MUX4: mux2x1
@@ -101,13 +96,17 @@ begin
         O => ex_data
     );
 
-    data_write <= mem_data;
+    and_out <= should_branch and cond_branch after 0.25 ns;
+
     rw <= write_mem;
     address <= ALU_out;
     data_write <= regB;
 
+    PCsrc <= and_out or uncond_branch after 0.25 ns;
+    NPCJ <= m_NPCJ;
+
     MEM_WB(4 downto 0)      <= rd;
-    MEM_WB(36 downto 5)     <= mem_data;
+    MEM_WB(36 downto 5)     <= data_read;
     MEM_WB(68 downto 37)    <= ex_data;
     MEM_WB(70 downto 69)    <= cWbo;
 
