@@ -28,10 +28,10 @@ PREPARE_TEST :=
 
 Para compilar, é necessário ter instalado o [GHDL](https://github.com/ghdl/ghdl) e adicioná-lo ao PATH da shell utilizada.
 
-Todos os comandos listados abaixo serão executados para um projeto específico, identificado pela variável `AT` do Makefile. Para mudar o projeto em que os comandos serão executados, basta mudar o valor padrão da variável para o nome da pasta do projeto atual. Também é possível fazer isso na chamada do comando, adicionando o novo valor da variável. Para executar o comando `make` no EP1, seria preciso fazer
+Todos os comandos listados abaixo serão executados para um projeto específico, identificado pela variável `EP` do Makefile. Para mudar o projeto em que os comandos serão executados, basta mudar o valor padrão da variável para o nome da pasta do projeto atual. Também é possível fazer isso na chamada do comando, adicionando o novo valor da variável. Para executar o comando `make` no EP1, seria preciso fazer
 
 ```bash
-make AT=t_five_mc
+make EP=t_five_mc
 ```
 
 ### Analisar
@@ -68,7 +68,7 @@ Além disso, para ver o resultado da simulação em um ambiente gráfico, utiliz
 Assim, para indicar precisamente qual o projeto utilizado, qual componente deverá ser testado e se o ambiente gráfico deve ou não ser aberto, é preciso executar
 
 ```bash
-make test AT=t_five_mc CPNT=t_five_mc VISUAL=1
+make test EP=t_five_mc CPNT=t_five_mc VISUAL=1
 ```
 O componente `t_five_mc` será testado com a testbench `t_five_mc_tb` e o GtkWave será aberto para visualizar o resultado da simulação.
 

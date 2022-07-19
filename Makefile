@@ -10,21 +10,21 @@
 ###############################################################################
 
 # Current project folder
-AT ?= t_five_pipeline
+EP ?= t_five_pipeline
 
 # Include the project specif information
-include $(AT)/description.mk
+include $(EP)/description.mk
 
 ###############################################################################
 ## Input files
 ###############################################################################
 
 # Build directory
-WORK_DIR := $(AT)/work
+WORK_DIR := $(EP)/work
 
 # Source directories
-CPNT_DIR := $(AT)/component
-TB_DIR := $(AT)/testbench
+CPNT_DIR := $(EP)/component
+TB_DIR := $(EP)/testbench
 
 # Source Files
 CPNT_TARGETS	:= $(addprefix $(CPNT_DIR)/, $(addsuffix .vhd, $(CPNT_LIST)))
@@ -33,7 +33,7 @@ ALL_TARGETS		:= $(CPNT_TARGETS) $(TB_TARGETS)
 
 # Default values, can be set on the command line or here
 DEBUG	?= 1
-VISUAL	?= 1
+VISUAL	?= 0
 VERBOSE	?= 1
 
 ###############################################################################
