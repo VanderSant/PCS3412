@@ -13,7 +13,11 @@ entity writeback is
         -- Saídas
         reg_write: out std_logic;
         rd: out std_logic_vector(4 downto 0);
-        data_write: out std_logic_vector(31 downto 0)
+        data_write: out std_logic_vector(31 downto 0);
+
+        -- Interface de Hazard
+        WB_predict: out std_logic_vector(31 downto 0);
+        regWwb: out std_logic
 
     );
 end entity;
@@ -54,4 +58,7 @@ MUX5: mux2x1
     rd <= MEM_WB(4 downto 0);
     data_write <= m_data_write;
     
+
+    WB_predict <= m_data_write;
+    regWwb <= MEM_WB(69);
 end architecture writeback_arch;

@@ -12,15 +12,12 @@ entity hazard is
     regWwb: in std_logic;
 
     -- writing registers
-    reg_exA: in std_logic_vector(4 downto 0);
-    reg_memA: in std_logic_vector(4 downto 0);
-    reg_wbA: in std_logic_vector(4 downto 0);
-
-    reg_exB: in std_logic_vector(4 downto 0);
-    reg_memB: in std_logic_vector(4 downto 0);
-    reg_wbB: in std_logic_vector(4 downto 0);
-
-    reg_ID: in std_logic_vector(4 downto 0);
+    rs1: in std_logic_vector(4 downto 0);
+    rs2: in std_logic_vector(4 downto 0);
+    
+    rd_exe: in std_logic_vector(4 downto 0);
+    rd_mem: in std_logic_vector(4 downto 0);
+    rd_wb: in std_logic_vector(4 downto 0);
 
     --output signals
     cHzA: out std_logic_vector(1 downto 0);
@@ -36,21 +33,18 @@ signal conflict_exA, conflict_memA, conflict_wbA: std_logic;
 signal conflict_exB, conflict_memB, conflict_wbB: std_logic;
 begin
 
-
-    conflict_exA <= regWex when (reg_exA = reg_ID) else '0';
-
-    
-    conflict_memA <= regWmem when (reg_memA = reg_ID) else '0';
-    conflict_wbA <= regWwb when (reg_wbA = reg_ID) else '0';
+    conflict_exA <= regWex when (rd_exe = rs1) else '0';
+    conflict_memA <= regWmem when (rd_mem = rs1) else '0';
+    conflict_wbA <= regWwb when (rd_wb = rs1) else '0';
 
     cHzA <= "01" when (conflict_exA = '1') else
             "10" when (conflict_memA = '1') else
             "11" when (conflict_wbA = '1') else
             "00";
 
-    conflict_exB <= regWex when (reg_exB = reg_ID) else '0';
-    conflict_memB <= regWmem when (reg_memB = reg_ID) else '0';
-    conflict_wbB <= regWwb when (reg_wbB = reg_ID) else '0';
+    conflict_exB <= regWex when (rd_exe = rs2) else '0';
+    conflict_memB <= regWmem when (rd_mem = rs2) else '0';
+    conflict_wbB <= regWwb when (rd_wb = rs2) else '0';
 
     cHzB <= "01" when (conflict_exB = '1') else
             "10" when (conflict_memB = '1') else

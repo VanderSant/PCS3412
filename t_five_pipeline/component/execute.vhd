@@ -6,7 +6,12 @@ use IEEE.numeric_std.all;
 entity execute is 
     port(
         ID_EX : in std_logic_vector(138 downto 0);
-        EX_MEM : out std_logic_vector(139 downto 0)
+        EX_MEM : out std_logic_vector(139 downto 0);
+
+        --interaface de Hazard
+        EX_predict: out std_logic_vector(31 downto 0);
+        regWex: out std_logic;
+        rd: out std_logic_vector(4 downto 0)
     );
 end entity;
 
@@ -89,7 +94,7 @@ architecture execute_arch of execute is
 
     signal funct3 : std_logic_vector(2 downto 0) := (others => '0');
     signal funct7 : std_logic_vector(6 downto 0) := (others => '0');
-    signal rd : std_logic_vector(4 downto 0) := (others => '0');
+    signal m_rd : std_logic_vector(4 downto 0) := (others => '0');
 
     signal ula_src : std_logic := '0';
     signal ula_op, se_op : std_logic_vector(1 downto 0) := (others => '0');
@@ -117,7 +122,7 @@ architecture execute_arch of execute is
         -- Instruction divison
         funct3 <= inst(14 downto 12);
         funct7 <= inst(31 downto 25);
-        rd <= inst(11 downto 7);
+        m_rd <= inst(11 downto 7);
 
         -- xEXo divison
         ula_src <= cEXo(0);
@@ -192,7 +197,20 @@ architecture execute_arch of execute is
             O => should_branch
         );
 
-        EX_MEM(4 downto 0) <= rd;
+        MUX9: mux2x1
+        generic map(
+            NB => 32,
+            t_sel => 0.5 ns,
+            t_data => 0.25 ns
+        )
+        port map(
+            Sel => cMo(1),
+            I0 => ULAOut,
+            I1 => NPC,
+            O => EX_predict
+        );
+
+        EX_MEM(4 downto 0) <= m_rd;
         EX_MEM(36 downto 5) <= regB;
         EX_MEM(68 downto 37) <= ULAOut;
         EX_MEM(69) <= should_branch;
@@ -200,5 +218,7 @@ architecture execute_arch of execute is
         EX_MEM(133 downto 102) <= NPC;
         EX_MEM(137 downto 134) <= cMo;
         EX_MEM(139 downto 138) <= cWBo;
-
+                
+        regWex <= cWbo(0);
+        rd <= m_rd;
 end architecture execute_arch ; 

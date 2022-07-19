@@ -84,21 +84,35 @@ architecture structural of t_five_pipeline is
 
             -- Interface IF/ID
             IF_ID: in std_logic_vector(63 downto 0);
-
+    
             -- Interface ID/EX
             ID_EX: out std_logic_vector(138 downto 0);     
-
+    
             -- Entradas
             reg_write: in std_logic;
             rd: in std_logic_vector(4 downto 0);
-            data_write: in std_logic_vector(31 downto 0)
-        );
+            data_write: in std_logic_vector(31 downto 0);
+    
+            -- Interface de Hazard
+            rs1:  out std_logic_vector(4 downto 0);
+            rs2:  out std_logic_vector(4 downto 0);
+            cHzA: in std_logic_vector(1 downto 0);
+            cHzB: in std_logic_vector(1 downto 0);
+            EX_predict: in std_logic_vector(31 downto 0);
+            MEM_predict: in std_logic_vector(31 downto 0);
+            WB_predict: in std_logic_vector(31 downto 0)        );
     end component;
 
     component execute is 
         port(
             ID_EX : in std_logic_vector(138 downto 0);
-            EX_MEM : out std_logic_vector(139 downto 0)
+            EX_MEM : out std_logic_vector(139 downto 0);
+        
+            --interaface de Hazard
+            EX_predict: out std_logic_vector(31 downto 0);
+            regWex: out std_logic;
+            rd: out std_logic_vector(4 downto 0)
+
         );
     end component execute;
     
@@ -117,10 +131,15 @@ architecture structural of t_five_pipeline is
             address:    out std_logic_vector(31 downto 0);
             data_write: out std_logic_vector(31 downto 0);
             data_read:  in std_logic_vector(31 downto 0);
-
+    
             -- interface com fetch
             NPCJ:       out std_logic_vector(31 downto 0);
-            PCsrc:      out std_logic
+            PCsrc:      out std_logic;
+    
+            --interface de Hazard
+            MEM_predict: out std_logic_vector(31 downto 0);
+            regWmem: out std_logic;
+            rd : out std_logic_vector(4 downto 0)
         );
     end component mem;
 
@@ -134,11 +153,38 @@ architecture structural of t_five_pipeline is
         -- Saídas
         reg_write: out std_logic;
         rd: out std_logic_vector(4 downto 0);
-        data_write: out std_logic_vector(31 downto 0)
+        data_write: out std_logic_vector(31 downto 0);
 
+        -- Interface de Hazard
+        WB_predict: out std_logic_vector(31 downto 0);
+        regWwb: out std_logic
     );
     end component;
 
+    component hazard is
+        port (
+            clock: in std_logic;
+    
+            -- control signals
+            regWex: in std_logic;
+            regWmem: in std_logic;
+            regWwb: in std_logic;
+        
+            -- writing registers
+            rs1: in std_logic_vector(4 downto 0);
+            rs2: in std_logic_vector(4 downto 0);
+            
+            rd_exe: in std_logic_vector(4 downto 0);
+            rd_mem: in std_logic_vector(4 downto 0);
+            rd_wb: in std_logic_vector(4 downto 0);
+        
+            --output signals
+            cHzA: out std_logic_vector(1 downto 0);
+            cHzB: out std_logic_vector(1 downto 0)
+      
+      
+          ) ;
+    end component;
     -- Sinais internos para memória
     signal m_rw: std_logic;
     signal m_imem_add, m_imem_out, m_dmem_add, m_dmem_out, m_dmem_in: std_logic_vector(31 downto 0);
@@ -156,6 +202,12 @@ architecture structural of t_five_pipeline is
     signal m_reg_write : std_logic := '0';
     signal m_reg_data_write : std_logic_vector(31 downto 0) := (others => '0');
     signal m_rd : std_logic_vector(4 downto 0) := (others => '0');
+
+    -- sinais para Hazard
+    signal m_rs1, m_rs2, m_rd_exe, m_rd_mem, m_rd_wb: std_logic_vector(4 downto 0) := (others => '0');
+    signal m_cHzA, m_cHzB: std_logic_vector(1 downto 0) := (others => '0');
+    signal m_EX_predict, m_MEM_predict, m_WB_predict: std_logic_vector(31 downto 0) := (others => '0');
+    signal m_regWex, m_regWmem, m_regWwb : std_logic := '0'; 
 
 begin
 IMEM: rom
@@ -276,13 +328,23 @@ ID_STAGE: decode
         ID_EX =>  m_id_ex_d,
         reg_write => m_reg_write,
         rd => m_rd,
-        data_write => m_reg_data_write
+        data_write => m_reg_data_write,
+        rs1 => m_rs1,
+        rs2 => m_rs2,
+        cHzA => m_cHzA,
+        cHzB => m_cHzB,
+        EX_predict => m_EX_predict,
+        MEM_predict => m_MEM_predict,
+        WB_predict => m_WB_predict
     );
 
 EX_STATE: execute
     port map(
         ID_EX => m_id_ex_q,
-        EX_MEM => m_ex_mem_d
+        EX_MEM => m_ex_mem_d,
+        EX_predict => m_EX_predict,
+        regWex => m_regWex,
+        rd => m_rd_exe
     );
 
 MEM_STAGE: mem
@@ -296,7 +358,10 @@ MEM_STAGE: mem
         address => m_dmem_add,
         data_read => m_dmem_out,
         NPCJ => m_NPCJ,
-        PCsrc => m_pc_src
+        PCsrc => m_pc_src,
+        MEM_predict => m_MEM_predict,
+        regWmem => m_regWmem,
+        rd => m_rd_mem
     );
 
 
@@ -307,7 +372,33 @@ WB_STAGE: writeback
         MEM_WB => m_mem_wb_q,
         reg_write => m_reg_write,
         rd => m_rd,
-        data_write => m_reg_data_write
+        data_write => m_reg_data_write,
+        WB_predict => m_WB_predict,
+        regWwb => m_regWwb
+    );
+m_rd_wb <= m_rd;
+
+HZ: hazard
+    port map(
+        clock => clock,
+    
+        -- control signals
+        regWex => m_regWex,
+        regWmem => m_regWmem,
+        regWwb => m_regWwb,
+    
+        -- writing registers
+        rs1 => m_rs1,
+        rs2 => m_rs2,
+
+        rd_exe => m_rd_exe,
+        rd_mem => m_rd_mem,
+        rd_wb => m_rd_wb,
+        
+        --output signals
+        cHzA => m_cHzA,
+        cHzB => m_cHzB
+    
     );
 
 end architecture structural;

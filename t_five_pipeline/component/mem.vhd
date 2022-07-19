@@ -21,7 +21,12 @@ entity mem is
 
         -- interface com fetch
         NPCJ:       out std_logic_vector(31 downto 0);
-        PCsrc:      out std_logic
+        PCsrc:      out std_logic;
+
+        --interface de Hazard
+        MEM_predict: out std_logic_vector(31 downto 0);
+        regWmem: out std_logic;
+        rd : out std_logic_vector(4 downto 0)
     );
 end entity;
 
@@ -46,7 +51,7 @@ architecture mem_arch of mem is
 
     signal cWbo: std_logic_vector(1 downto 0) := (others => '0');
 
-    signal rd: std_logic_vector(4 downto 0) := (others => '0');
+    signal m_rd: std_logic_vector(4 downto 0) := (others => '0');
 
     signal zero, 
            negative, 
@@ -58,7 +63,7 @@ architecture mem_arch of mem is
            and_out: std_logic := '0';
 begin
 
-    rd              <= EX_MEM(4 downto 0);
+    m_rd              <= EX_MEM(4 downto 0);
     regB            <= EX_MEM(36 downto 5);
     ALU_out         <= EX_MEM(68 downto 37);
     should_branch   <= EX_MEM(69); 
@@ -83,7 +88,7 @@ begin
         O => m_NPCJ
     );
 
-    MUX4: mux2x1
+MUX4: mux2x1
     generic map(
         NB => 32,
         t_sel => 0.5 ns,
@@ -95,6 +100,20 @@ begin
         I1 => NPC,
         O => ex_data
     );
+    
+MUX9: mux2x1
+    generic map(
+        NB => 32,
+        t_sel => 0.5 ns,
+        t_data => 0.25 ns
+    )
+    port map(
+        Sel => cWbo(1),
+        I0 => ex_data,
+        I1 => data_read,
+        O => MEM_predict
+    );
+
 
     and_out <= should_branch and cond_branch after 0.25 ns;
 
@@ -105,9 +124,12 @@ begin
     PCsrc <= and_out or uncond_branch after 0.25 ns;
     NPCJ <= m_NPCJ;
 
-    MEM_WB(4 downto 0)      <= rd;
+    MEM_WB(4 downto 0)      <= m_rd;
     MEM_WB(36 downto 5)     <= data_read;
     MEM_WB(68 downto 37)    <= ex_data;
     MEM_WB(70 downto 69)    <= cWbo;
 
+    regWmem <= cWbo(0);
+    
+    rd <= m_rd;
 end mem_arch ; -- mem_arch
